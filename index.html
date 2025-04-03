@@ -139,11 +139,46 @@
         .hide-zero {
             visibility: hidden;
         }
+        
+        .denomination-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background-color: #111;
+            margin-bottom: 10px;
+        }
+        
+        .denomination-label {
+            font-size: 18px;
+            margin-right: 10px;
+        }
+        
+        .denomination-input {
+            width: 60px;
+            font-size: 18px;
+            text-align: center;
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 8px;
+        }
+        
+        .dollar-sign {
+            font-size: 18px;
+            margin-right: 5px;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <div class="denomination-container">
+            <span class="denomination-label">Unit Value:</span>
+            <span class="dollar-sign">$</span>
+            <input type="number" id="denomination-input" class="denomination-input" value="5" min="1" step="1" onchange="updateDisplay()">
+        </div>
+        
         <div class="title-row">
             <div class="column">
                 <div style="width: 100%"></div>
@@ -155,6 +190,7 @@
                 <div style="width: 100%; text-align: center; font-size: 24px;">$</div>
             </div>
         </div>
+        
         <div class="main-content">
             <div class="column">
                 <div class="row">
@@ -248,7 +284,7 @@
                 <div class="row total-row">
                     <div class="label" id="total-label">TOTAL</div>
                 </div>
-
+                
                 <div class="row" style="margin-top: 20px;">
                     <button id="clear-button" onclick="clearAllValues()">CLEAR ALL</button>
                 </div>
@@ -373,57 +409,60 @@
 
         function updateDisplay() {
             let totalChips = 0;
-            let totalPayout = 0;
+            let totalUnitPayout = 0;
+            let totalDollarPayout = 0;
+            const denomination = parseInt(document.getElementById('denomination-input').value) || 5;
 
             betTypes.forEach(type => {
                 // Update the counter display
                 document.getElementById(`${type}-value`).textContent = values[type];
 
-                // Update the chip display
-                const chipElement = document.getElementById(`${type}-chips`);
-                chipElement.textContent = values[type];
-
                 // Get the label element for this bet type
                 const labelElement = document.getElementById(`${type}-label`);
-
+                
+                // Calculate unit payout (chips * multiplier)
+                const unitPayout = values[type] * multipliers[type];
+                
+                // Calculate dollar payout (unit payout * denomination)
+                const dollarPayout = unitPayout * denomination;
+                
+                // Update the chip display (which now represents unit payout)
+                const chipElement = document.getElementById(`${type}-chips`);
+                chipElement.textContent = unitPayout;
+                
+                // Update the payout display (which now represents dollar payout)
+                const payoutElement = document.getElementById(`${type}-payout`);
+                payoutElement.textContent = dollarPayout;
+                
                 // Hide or show based on value
                 if (values[type] === 0) {
                     chipElement.classList.add('hide-zero');
+                    payoutElement.classList.add('hide-zero');
                     labelElement.style.color = 'white'; // Reset label color
                 } else {
                     chipElement.classList.remove('hide-zero');
-                    labelElement.style.color = '#d59718'; // Highlight label color
-                }
-
-                // Calculate and update the payout using the correct multiplier for each type
-                const payout = values[type] * multipliers[type];
-                const payoutElement = document.getElementById(`${type}-payout`);
-                payoutElement.textContent = payout;
-
-                // Hide or show based on value
-                if (payout === 0) {
-                    payoutElement.classList.add('hide-zero');
-                } else {
                     payoutElement.classList.remove('hide-zero');
+                    labelElement.style.color = '#d59718'; // Highlight label color
                 }
 
                 // Update totals
                 totalChips += values[type];
-                totalPayout += payout;
+                totalUnitPayout += unitPayout;
+                totalDollarPayout += dollarPayout;
             });
 
             // Update total displays
-            document.getElementById('total-chips').textContent = totalChips;
-            document.getElementById('total-payout').textContent = totalPayout;
-
-            // Hide total if zero (except for the input column which always shows)
-            if (totalChips === 0) {
+            document.getElementById('total-chips').textContent = totalUnitPayout;
+            document.getElementById('total-payout').textContent = totalDollarPayout;
+            
+            // Hide total if zero
+            if (totalUnitPayout === 0) {
                 document.getElementById('total-chips').classList.add('hide-zero');
             } else {
                 document.getElementById('total-chips').classList.remove('hide-zero');
             }
-
-            if (totalPayout === 0) {
+            
+            if (totalDollarPayout === 0) {
                 document.getElementById('total-payout').classList.add('hide-zero');
             } else {
                 document.getElementById('total-payout').classList.remove('hide-zero');
@@ -435,11 +474,11 @@
             betTypes.forEach(type => {
                 values[type] = 0;
             });
-
+            
             // Update the display
             updateDisplay();
         }
-
+        
         // Initialize display
         updateDisplay();
     </script>
