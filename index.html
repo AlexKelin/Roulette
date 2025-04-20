@@ -484,13 +484,17 @@
                 // Get the label element for this bet type
                 const labelElement = document.getElementById(`${type}-label`);
                 
-                // Calculate unit payout (chips * multiplier)
-                const unitPayout = values[type] * multipliers[type];
+                // Calculate total chips for this bet type
+                const betChips = values[type];
+                
+                // Calculate unit payout (bet amount * multiplier + bet amount)
+                // This includes the return of the original bet
+                const unitPayout = betChips * (multipliers[type] + 1);
                 
                 // Calculate dollar payout (unit payout * denomination)
                 const dollarPayout = unitPayout * denomination;
                 
-                // Update the chip display (which now represents unit payout)
+                // Update the chip display (which now represents total unit payout)
                 const chipElement = document.getElementById(`${type}-chips`);
                 chipElement.textContent = unitPayout;
                 
@@ -510,14 +514,15 @@
                 }
 
                 // Update totals
-                totalChips += values[type];
+                totalChips += betChips;
                 totalUnitPayout += unitPayout;
                 totalDollarPayout += dollarPayout;
             });
 
-            // Calculate grand totals
-            grandTotalPayout = totalDollarPayout + (totalChips * denomination);
-            grandTotalUnits = totalUnitPayout + totalChips; // Total units of payout plus original bet units
+            // For grand totals, we're already including the return of the original bet
+            // in each individual unit payout calculation above
+            grandTotalPayout = totalDollarPayout;
+            grandTotalUnits = totalUnitPayout;
 
             // Update total displays
             document.getElementById('total-chips').textContent = totalUnitPayout;
