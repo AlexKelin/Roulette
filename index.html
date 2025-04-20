@@ -191,17 +191,28 @@
             z-index: 100;
         }
         
-        .grand-total-label {
+        .grand-total-section {
             flex: 1;
-            font-size: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .grand-total-label {
+            font-size: 16px;
             color: #d59718;
             text-align: center;
-            padding-left: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .grand-total-units {
+            font-size: 40px;
+            color: #d59718;
+            text-align: center;
         }
         
         .grand-total-value {
-            flex: 2;
-            font-size: 60px;
+            font-size: 50px;
             color: #40e0d0;
             text-align: center;
         }
@@ -405,10 +416,19 @@
             </div>
         </div>
         
-        <!-- Simple grand total bar -->
+        <!-- Grand total bar with both units and dollar values -->
         <div class="grand-total-bar">
-            <div class="grand-total-label">GRAND TOTAL</div>
-            <div class="grand-total-value" id="grand-total-payout">0</div>
+            <div class="grand-total-section">
+                <div class="grand-total-label">GRAND TOTAL</div>
+            </div>
+            <div class="grand-total-section">
+                <div class="grand-total-label">UNITS</div>
+                <div class="grand-total-units" id="grand-total-units">0</div>
+            </div>
+            <div class="grand-total-section">
+                <div class="grand-total-label">$</div>
+                <div class="grand-total-value" id="grand-total-payout">0</div>
+            </div>
         </div>
     </div>
 
@@ -454,6 +474,7 @@
             let totalUnitPayout = 0;
             let totalDollarPayout = 0;
             let grandTotalPayout = 0;
+            let grandTotalUnits = 0;
             const denomination = parseInt(document.getElementById('denomination-input').value) || 5;
 
             betTypes.forEach(type => {
@@ -494,13 +515,15 @@
                 totalDollarPayout += dollarPayout;
             });
 
-            // Calculate grand total (this is the total payout including return of original bet)
+            // Calculate grand totals
             grandTotalPayout = totalDollarPayout + (totalChips * denomination);
+            grandTotalUnits = totalUnitPayout + totalChips; // Total units of payout plus original bet units
 
             // Update total displays
             document.getElementById('total-chips').textContent = totalUnitPayout;
             document.getElementById('total-payout').textContent = totalDollarPayout;
             document.getElementById('grand-total-payout').textContent = grandTotalPayout;
+            document.getElementById('grand-total-units').textContent = grandTotalUnits;
             
             // Hide total if zero
             if (totalUnitPayout === 0) {
