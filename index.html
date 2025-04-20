@@ -72,13 +72,14 @@
             background-color: #333;
             color: white;
             border: none;
-            width: 40px;
-            height: 40px;
-            font-size: 24px;
+            width: 50px; /* Increased from 40px */
+            height: 50px; /* Increased from 40px */
+            font-size: 32px; /* Increased from 24px */
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            touch-action: manipulation; /* Prevents default touch actions */
         }
         
         .counter-value {
@@ -132,6 +133,7 @@
             cursor: pointer;
             border-radius: 4px;
             width: 200px;
+            touch-action: manipulation; /* Prevents default touch actions */
         }
         
         #clear-button:hover {
@@ -169,6 +171,24 @@
         .dollar-sign {
             font-size: 18px;
             margin-right: 5px;
+        }
+        
+        /* Grand total row style */
+        .grand-total-row {
+            border-top: 2px solid #d59718;
+            font-weight: bold;
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+        
+        .grand-total-label {
+            font-size: 20px;
+            color: #d59718;
+        }
+        
+        .grand-total-value {
+            font-size: 80px;
+            color: #40e0d0;
         }
     </style>
 </head>
@@ -287,6 +307,11 @@
                     <div class="label" id="total-label">TOTAL</div>
                 </div>
                 
+                <!-- Grand Total Row -->
+                <div class="row grand-total-row">
+                    <div class="label grand-total-label">GRAND TOTAL</div>
+                </div>
+                
                 <div class="row" style="margin-top: 20px;">
                     <button id="clear-button" onclick="clearAllValues()">CLEAR ALL</button>
                 </div>
@@ -329,6 +354,11 @@
                 <div class="row total-row">
                     <div class="display-value chip-value" id="total-chips">0</div>
                 </div>
+                
+                <!-- Grand Total Units - Set to Empty -->
+                <div class="row grand-total-row">
+                    <div class="display-value" style="color: transparent;">0</div>
+                </div>
             </div>
 
             <div class="column">
@@ -368,6 +398,11 @@
                 <div class="row total-row">
                     <div class="display-value payout-value" id="total-payout">0</div>
                 </div>
+                
+                <!-- Grand Total Payout -->
+                <div class="row grand-total-row">
+                    <div class="display-value grand-total-value" id="grand-total-payout">0</div>
+                </div>
             </div>
         </div>
     </div>
@@ -400,6 +435,7 @@
         function incrementValue(type) {
             values[type]++;
             updateDisplay();
+            event.preventDefault(); // Prevent default behavior
         }
 
         function decrementValue(type) {
@@ -407,12 +443,14 @@
                 values[type]--;
                 updateDisplay();
             }
+            event.preventDefault(); // Prevent default behavior
         }
 
         function updateDisplay() {
             let totalChips = 0;
             let totalUnitPayout = 0;
             let totalDollarPayout = 0;
+            let grandTotalPayout = 0;
             const denomination = parseInt(document.getElementById('denomination-input').value) || 5;
 
             betTypes.forEach(type => {
@@ -453,9 +491,13 @@
                 totalDollarPayout += dollarPayout;
             });
 
+            // Calculate grand total (this is the total payout including return of original bet)
+            grandTotalPayout = totalDollarPayout + (totalChips * denomination);
+
             // Update total displays
             document.getElementById('total-chips').textContent = totalUnitPayout;
             document.getElementById('total-payout').textContent = totalDollarPayout;
+            document.getElementById('grand-total-payout').textContent = grandTotalPayout;
             
             // Hide total if zero
             if (totalUnitPayout === 0) {
@@ -469,6 +511,11 @@
             } else {
                 document.getElementById('total-payout').classList.remove('hide-zero');
             }
+            
+            // Don't hide grand total even if zero
+            if (grandTotalPayout === 0) {
+                document.getElementById('grand-total-payout').classList.remove('hide-zero');
+            }
         }
 
         function clearAllValues() {
@@ -479,7 +526,15 @@
             
             // Update the display
             updateDisplay();
+            event.preventDefault(); // Prevent default behavior
         }
+        
+        // Prevent zooming when tapping buttons
+        document.addEventListener('touchstart', function(event) {
+            if (event.target.classList.contains('counter-btn') || event.target.id === 'clear-button') {
+                event.preventDefault();
+            }
+        }, { passive: false });
         
         // Initialize display
         updateDisplay();
