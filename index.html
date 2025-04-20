@@ -25,16 +25,15 @@
             max-width: 100%;
             margin: 0 auto;
             box-sizing: border-box;
-            position: relative; /* For absolute positioning of clear button */
+            position: relative;
         }
         
         .main-content {
             display: flex;
             flex: 1;
             width: 100%;
-            height: calc(100% - 100px); /* Reserve space for header */
-            overflow-y: auto; /* Allow scrolling if needed */
-            padding-bottom: 80px; /* Space for grand total to be visible */
+            overflow-y: auto;
+            padding-bottom: 80px; /* Make room for totals at bottom */
         }
         
         .column {
@@ -47,15 +46,15 @@
         
         .row {
             display: flex;
-            height: 52px; /* Reduced height */
-            margin-bottom: 3px; /* Reduced margin */
+            height: 52px;
+            margin-bottom: 3px;
             align-items: center;
             justify-content: center;
         }
         
         .label {
-            width: 120px; /* Reduced width */
-            font-size: 14px; /* Slightly smaller font */
+            width: 120px;
+            font-size: 14px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -72,14 +71,14 @@
             background-color: #333;
             color: white;
             border: none;
-            width: 46px; /* Slightly smaller */
-            height: 46px; /* Slightly smaller */
-            font-size: 28px; /* Slightly smaller */
+            width: 46px;
+            height: 46px;
+            font-size: 28px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 4px; /* Rounded corners for better touch */
+            border-radius: 4px;
         }
         
         .counter-value {
@@ -93,8 +92,8 @@
         }
         
         .display-value {
-            font-size: 52px; /* Smaller for better fit */
-            width: 90px; /* Smaller width */
+            font-size: 52px;
+            width: 90px;
             text-align: center;
             display: flex;
             align-items: center;
@@ -121,7 +120,7 @@
             font-size: 18px;
             margin-bottom: 5px;
             padding: 5px;
-            padding-left: 40px; /* Reduced */
+            padding-left: 40px;
             background-color: #111;
             position: sticky;
             top: 0;
@@ -140,10 +139,6 @@
             top: 8px;
             right: 8px;
             z-index: 10;
-        }
-        
-        #clear-button:hover {
-            background-color: #555;
         }
         
         .hide-zero {
@@ -183,40 +178,39 @@
             margin-right: 5px;
         }
         
-        /* Grand total row style - make it sticky at bottom */
-        .grand-total-row {
-            border-top: 2px solid #d59718;
-            font-weight: bold;
-            margin-top: 8px;
-            padding-top: 8px;
-            position: sticky;
+        /* Simple grand total bar */
+        .grand-total-bar {
+            display: flex;
+            position: fixed;
             bottom: 0;
-            background-color: #000;
-            z-index: 1;
-            height: 70px; /* Fixed height for grand total row */
+            left: 0;
+            width: 100%;
+            background-color: #111;
+            border-top: 2px solid #d59718;
+            padding: 10px 0;
+            z-index: 100;
         }
         
         .grand-total-label {
+            flex: 1;
             font-size: 18px;
             color: #d59718;
+            text-align: center;
+            padding-left: 20px;
         }
         
         .grand-total-value {
-            font-size: 60px; /* Smaller */
+            flex: 2;
+            font-size: 60px;
             color: #40e0d0;
-        }
-        
-        /* Add padding to ensure no overlap at bottom */
-        .bottom-padding {
-            height: 20px;
-            width: 100%;
+            text-align: center;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <!-- Clear All button moved to top right corner -->
+        <!-- Clear All button in top right -->
         <button id="clear-button" onclick="clearAllValues()">CLEAR ALL</button>
         
         <div class="denomination-container">
@@ -330,14 +324,6 @@
                 <div class="row total-row">
                     <div class="label" id="total-label">TOTAL</div>
                 </div>
-                
-                <!-- Grand Total Row -->
-                <div class="row grand-total-row">
-                    <div class="label grand-total-label">GRAND TOTAL</div>
-                </div>
-                
-                <!-- Add padding at the bottom to ensure no overlap -->
-                <div class="bottom-padding"></div>
             </div>
 
             <div class="column">
@@ -377,14 +363,6 @@
                 <div class="row total-row">
                     <div class="display-value chip-value" id="total-chips">0</div>
                 </div>
-                
-                <!-- Grand Total Units - Set to Empty -->
-                <div class="row grand-total-row">
-                    <div class="display-value" style="color: transparent;">0</div>
-                </div>
-                
-                <!-- Add padding at the bottom to ensure no overlap -->
-                <div class="bottom-padding"></div>
             </div>
 
             <div class="column">
@@ -424,15 +402,13 @@
                 <div class="row total-row">
                     <div class="display-value payout-value" id="total-payout">0</div>
                 </div>
-                
-                <!-- Grand Total Payout -->
-                <div class="row grand-total-row">
-                    <div class="display-value grand-total-value" id="grand-total-payout">0</div>
-                </div>
-                
-                <!-- Add padding at the bottom to ensure no overlap -->
-                <div class="bottom-padding"></div>
             </div>
+        </div>
+        
+        <!-- Simple grand total bar -->
+        <div class="grand-total-bar">
+            <div class="grand-total-label">GRAND TOTAL</div>
+            <div class="grand-total-value" id="grand-total-payout">0</div>
         </div>
     </div>
 
@@ -538,11 +514,6 @@
             } else {
                 document.getElementById('total-payout').classList.remove('hide-zero');
             }
-            
-            // Don't hide grand total even if zero
-            if (grandTotalPayout === 0) {
-                document.getElementById('grand-total-payout').classList.remove('hide-zero');
-            }
         }
 
         function clearAllValues() {
@@ -554,20 +525,6 @@
             // Update the display
             updateDisplay();
         }
-        
-        // Force initial layout calculation
-        window.addEventListener('load', function() {
-            // Small timeout to ensure everything is rendered
-            setTimeout(function() {
-                // Force layout recalculation
-                document.body.style.display = 'none';
-                document.body.offsetHeight; // Force reflow
-                document.body.style.display = '';
-                
-                // Initialize display
-                updateDisplay();
-            }, 100);
-        });
         
         // Initialize display
         updateDisplay();
