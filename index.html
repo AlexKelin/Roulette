@@ -3,9 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roulette Payout Calculator</title>
     <style>
         body {
@@ -79,7 +77,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            touch-action: manipulation; /* Prevents default touch actions */
         }
         
         .counter-value {
@@ -133,7 +130,6 @@
             cursor: pointer;
             border-radius: 4px;
             width: 200px;
-            touch-action: manipulation; /* Prevents default touch actions */
         }
         
         #clear-button:hover {
@@ -435,7 +431,6 @@
         function incrementValue(type) {
             values[type]++;
             updateDisplay();
-            event.preventDefault(); // Prevent default behavior
         }
 
         function decrementValue(type) {
@@ -443,7 +438,6 @@
                 values[type]--;
                 updateDisplay();
             }
-            event.preventDefault(); // Prevent default behavior
         }
 
         function updateDisplay() {
@@ -526,15 +520,7 @@
             
             // Update the display
             updateDisplay();
-            event.preventDefault(); // Prevent default behavior
         }
-        
-        // Prevent zooming when tapping buttons
-        document.addEventListener('touchstart', function(event) {
-            if (event.target.classList.contains('counter-btn') || event.target.id === 'clear-button') {
-                event.preventDefault();
-            }
-        }, { passive: false });
         
         // Initialize display
         updateDisplay();
