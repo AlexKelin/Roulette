@@ -25,15 +25,16 @@
             max-width: 100%;
             margin: 0 auto;
             box-sizing: border-box;
+            position: relative; /* For absolute positioning of clear button */
         }
         
         .main-content {
             display: flex;
             flex: 1;
             width: 100%;
-            height: calc(100% - 120px); /* Reserve space for header */
+            height: calc(100% - 100px); /* Reserve space for header */
             overflow-y: auto; /* Allow scrolling if needed */
-            padding-bottom: 60px; /* Space for grand total to be visible */
+            padding-bottom: 80px; /* Space for grand total to be visible */
         }
         
         .column {
@@ -131,11 +132,14 @@
             background-color: #333;
             color: white;
             border: none;
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 10px 15px;
+            font-size: 14px;
             cursor: pointer;
             border-radius: 4px;
-            width: 160px; /* Slightly smaller */
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 10;
         }
         
         #clear-button:hover {
@@ -149,8 +153,9 @@
         .denomination-container {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             padding: 8px;
+            padding-left: 16px;
             background-color: #111;
             margin-bottom: 5px;
             position: sticky;
@@ -188,6 +193,7 @@
             bottom: 0;
             background-color: #000;
             z-index: 1;
+            height: 70px; /* Fixed height for grand total row */
         }
         
         .grand-total-label {
@@ -200,21 +206,19 @@
             color: #40e0d0;
         }
         
-        /* Controls container for clear button */
-        .controls-container {
-            padding: 10px;
-            background-color: #111;
-            display: flex;
-            justify-content: center;
-            position: sticky;
-            bottom: 0;
-            z-index: 2;
+        /* Add padding to ensure no overlap at bottom */
+        .bottom-padding {
+            height: 20px;
+            width: 100%;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <!-- Clear All button moved to top right corner -->
+        <button id="clear-button" onclick="clearAllValues()">CLEAR ALL</button>
+        
         <div class="denomination-container">
             <span class="denomination-label">Unit Value:</span>
             <span class="dollar-sign">$</span>
@@ -332,9 +336,8 @@
                     <div class="label grand-total-label">GRAND TOTAL</div>
                 </div>
                 
-                <div class="controls-container">
-                    <button id="clear-button" onclick="clearAllValues()">CLEAR ALL</button>
-                </div>
+                <!-- Add padding at the bottom to ensure no overlap -->
+                <div class="bottom-padding"></div>
             </div>
 
             <div class="column">
@@ -380,8 +383,8 @@
                     <div class="display-value" style="color: transparent;">0</div>
                 </div>
                 
-                <!-- Empty div for spacing -->
-                <div style="height: 40px;"></div>
+                <!-- Add padding at the bottom to ensure no overlap -->
+                <div class="bottom-padding"></div>
             </div>
 
             <div class="column">
@@ -427,8 +430,8 @@
                     <div class="display-value grand-total-value" id="grand-total-payout">0</div>
                 </div>
                 
-                <!-- Empty div for spacing -->
-                <div style="height: 40px;"></div>
+                <!-- Add padding at the bottom to ensure no overlap -->
+                <div class="bottom-padding"></div>
             </div>
         </div>
     </div>
