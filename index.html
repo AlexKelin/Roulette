@@ -540,136 +540,136 @@
 
     <script>
         const betTypes = [
-            'straight', 'split', 'street', 'corner', 'five',
-            'sixline', 'dozen', 'column', 'highlow', 'redblack', 'oddeven'
-        ];
+    'straight', 'split', 'street', 'corner', 'five',
+    'sixline', 'dozen', 'column', 'highlow', 'redblack', 'oddeven'
+];
 
-        const multipliers = {
-            'straight': 35,
-            'split': 17,
-            'street': 11,
-            'corner': 8,
-            'five': 6,
-            'sixline': 5,
-            'dozen': 2,
-            'column': 2,
-            'highlow': 1,
-            'redblack': 1,
-            'oddeven': 1
-        };
+const multipliers = {
+    'straight': 35,
+    'split': 17,
+    'street': 11,
+    'corner': 8,
+    'five': 6,
+    'sixline': 5,
+    'dozen': 2,
+    'column': 2,
+    'highlow': 1,
+    'redblack': 1,
+    'oddeven': 1
+};
 
-        const values = {};
-        betTypes.forEach(type => {
-            values[type] = 0;
-        });
+const values = {};
+betTypes.forEach(type => {
+    values[type] = 0;
+});
 
-        function incrementValue(type) {
-            values[type]++;
-            updateDisplay();
-        }
+function incrementValue(type) {
+    values[type]++;
+    updateDisplay();
+}
 
-        function decrementValue(type) {
-            if (values[type] > 0) {
-                values[type]--;
-                updateDisplay();
-            }
-        }
-
-        function updateDisplay() {
-            let totalBets = 0;
-            let totalUnitPayout = 0;
-            let totalDollarPayout = 0;
-            const denomination = parseInt(document.getElementById('denomination-input').value) || 5;
-
-            betTypes.forEach(type => {
-                // Get bet amount for this type
-                const betAmount = values[type];
-                
-                // Update the counter display
-                document.getElementById(`${type}-value`).textContent = betAmount;
-                
-                // Update the units column (just the bet amount)
-                document.getElementById(`${type}-units`).textContent = betAmount;
-                
-                // Get the label element for this bet type
-                const labelElement = document.getElementById(`${type}-label`);
-                
-                // Calculate unit payout (number of units won + original bet)
-                const unitPayout = betAmount * multipliers[type] + betAmount;
-                
-                // Calculate dollar payout
-                const dollarPayout = unitPayout * denomination;
-                
-                // Update the chip display (total units return)
-                const chipElement = document.getElementById(`${type}-chips`);
-                chipElement.textContent = unitPayout;
-                
-                // Update the payout display (dollar amount)
-                const payoutElement = document.getElementById(`${type}-payout`);
-                payoutElement.textContent = dollarPayout;
-                
-                // Hide or show based on value
-                if (betAmount === 0) {
-                    chipElement.classList.add('hide-zero');
-                    payoutElement.classList.add('hide-zero');
-                    document.getElementById(`${type}-units`).textContent = '0';
-                    labelElement.style.color = 'white'; // Reset label color
-                } else {
-                    chipElement.classList.remove('hide-zero');
-                    payoutElement.classList.remove('hide-zero');
-                    labelElement.style.color = '#d59718'; // Highlight label color
-                }
-
-                // Update totals
-                totalBets += betAmount;
-                totalUnitPayout += unitPayout;
-                totalDollarPayout += dollarPayout;
-            });
-
-            // Update total displays
-            document.getElementById('total-units').textContent = totalBets;
-            document.getElementById('total-chips').textContent = totalUnitPayout;
-            document.getElementById('total-payout').textContent = totalDollarPayout;
-            document.getElementById('grand-total-bet').textContent = totalBets;
-            document.getElementById('grand-total-units').textContent = totalUnitPayout;
-            document.getElementById('grand-total-payout').textContent = totalDollarPayout;
-            
-            // Hide total if zero
-            if (totalUnitPayout === 0) {
-                document.getElementById('total-chips').classList.add('hide-zero');
-            } else {
-                document.getElementById('total-chips').classList.remove('hide-zero');
-            }
-            
-            if (totalDollarPayout === 0) {
-                document.getElementById('total-payout').classList.add('hide-zero');
-            } else {
-                document.getElementById('total-payout').classList.remove('hide-zero');
-            }
-        }
-
-        function clearAllValues() {
-            // Reset all values to 0
-            betTypes.forEach(type => {
-                values[type] = 0;
-            });
-            
-            // Update the display
-            updateDisplay();
-        }
-        
-        // Help tooltip toggle
-        document.getElementById('help-button').addEventListener('click', function() {
-            const tooltip = document.getElementById('help-tooltip');
-            if (tooltip.style.display === 'block') {
-                tooltip.style.display = 'none';
-            } else {
-                tooltip.style.display = 'block';
-            }
-        });
-        
-        // Initialize display
+function decrementValue(type) {
+    if (values[type] > 0) {
+        values[type]--;
         updateDisplay();
+    }
+}
+
+function updateDisplay() {
+    let totalBets = 0;
+    let totalUnitPayout = 0;
+    let totalDollarPayout = 0;
+    const denomination = parseInt(document.getElementById('denomination-input').value) || 5;
+
+    betTypes.forEach(type => {
+        // Get bet amount for this type
+        const betAmount = values[type];
+        
+        // Update the counter display
+        document.getElementById(`${type}-value`).textContent = betAmount;
+        
+        // Update the units column (just the bet amount)
+        document.getElementById(`${type}-units`).textContent = betAmount;
+        
+        // Get the label element for this bet type
+        const labelElement = document.getElementById(`${type}-label`);
+        
+        // Calculate unit payout (number of units won WITHOUT original bet)
+        const unitPayout = betAmount * multipliers[type];
+        
+        // Calculate dollar payout
+        const dollarPayout = unitPayout * denomination;
+        
+        // Update the chip display (only winnings, not including original bet)
+        const chipElement = document.getElementById(`${type}-chips`);
+        chipElement.textContent = unitPayout;
+        
+        // Update the payout display (dollar amount)
+        const payoutElement = document.getElementById(`${type}-payout`);
+        payoutElement.textContent = dollarPayout;
+        
+        // Hide or show based on value
+        if (betAmount === 0) {
+            chipElement.classList.add('hide-zero');
+            payoutElement.classList.add('hide-zero');
+            document.getElementById(`${type}-units`).textContent = '0';
+            labelElement.style.color = 'white'; // Reset label color
+        } else {
+            chipElement.classList.remove('hide-zero');
+            payoutElement.classList.remove('hide-zero');
+            labelElement.style.color = '#d59718'; // Highlight label color
+        }
+
+        // Update totals
+        totalBets += betAmount;
+        totalUnitPayout += unitPayout;
+        totalDollarPayout += dollarPayout;
+    });
+
+    // Update total displays
+    document.getElementById('total-units').textContent = totalBets;
+    document.getElementById('total-chips').textContent = totalUnitPayout;
+    document.getElementById('total-payout').textContent = totalDollarPayout;
+    document.getElementById('grand-total-bet').textContent = totalBets;
+    document.getElementById('grand-total-units').textContent = totalUnitPayout;
+    document.getElementById('grand-total-payout').textContent = totalDollarPayout;
+    
+    // Hide total if zero
+    if (totalUnitPayout === 0) {
+        document.getElementById('total-chips').classList.add('hide-zero');
+    } else {
+        document.getElementById('total-chips').classList.remove('hide-zero');
+    }
+    
+    if (totalDollarPayout === 0) {
+        document.getElementById('total-payout').classList.add('hide-zero');
+    } else {
+        document.getElementById('total-payout').classList.remove('hide-zero');
+    }
+}
+
+function clearAllValues() {
+    // Reset all values to 0
+    betTypes.forEach(type => {
+        values[type] = 0;
+    });
+    
+    // Update the display
+    updateDisplay();
+}
+
+// Help tooltip toggle
+document.getElementById('help-button').addEventListener('click', function() {
+    const tooltip = document.getElementById('help-tooltip');
+    if (tooltip.style.display === 'block') {
+        tooltip.style.display = 'none';
+    } else {
+        tooltip.style.display = 'block';
+    }
+});
+
+// Initialize display
+updateDisplay();
     </script>
 </body>
 
