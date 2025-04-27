@@ -108,23 +108,50 @@
             color: #40e0d0;
         }
         
-        
         .title-row {
             display: flex;
-            flex-direction: column;
             font-size: 18px;
             margin-bottom: 5px;
             padding: 5px;
-            padding-left: 40px;
             background-color: #111;
             position: sticky;
             top: 0;
             z-index: 1;
+            align-items: center;
         }
         
-        .title-columns {
+        .title-column {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .denomination-container {
             display: flex;
-            width: 100%;
+            align-items: center;
+            padding: 8px;
+            margin-right: 15px;
+            width: 190px; /* Match width of first column */
+        }
+        
+        .denomination-label {
+            font-size: 16px;
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+        
+        .denomination-input {
+            width: 60px;
+            font-size: 16px;
+            text-align: center;
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 6px;
+        }
+        
+        .dollar-sign {
+            font-size: 16px;
+            margin-right: 5px;
         }
         
         #clear-button {
@@ -143,35 +170,6 @@
         
         .hide-zero {
             visibility: hidden;
-        }
-        
-        .denomination-container {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 8px;
-            padding-left: 16px;
-            margin-bottom: 5px;
-        }
-        
-        .denomination-label {
-            font-size: 16px;
-            margin-right: 10px;
-        }
-        
-        .denomination-input {
-            width: 60px;
-            font-size: 16px;
-            text-align: center;
-            background-color: #333;
-            color: white;
-            border: none;
-            padding: 6px;
-        }
-        
-        .dollar-sign {
-            font-size: 16px;
-            margin-right: 5px;
         }
         
         /* Simple grand total bar */
@@ -278,29 +276,24 @@
         </div>
         
         <div class="title-row">
-            <!-- Added denomination container inside title-row -->
+            <!-- Denomination container on same line as column titles -->
             <div class="denomination-container">
                 <span class="denomination-label">Unit Value:</span>
                 <span class="dollar-sign">$</span>
                 <input type="number" id="denomination-input" class="denomination-input" value="5" min="1" step="1" onchange="updateDisplay()">
             </div>
             
-            <div class="title-columns">
-                <div class="column">
-                    <div style="width: 100%"></div>
-                </div>
-                <div class="column">
-                    <div style="width: 100%; text-align: center; font-size: 20px;">Units Placed</div>
-                    <div class="column-info">(Your Bet)</div>
-                </div>
-                <div class="column">
-                    <div style="width: 100%; text-align: center; font-size: 20px;">Total Return</div>
-                    <div class="column-info">(Original Bet + Winnings)</div>
-                </div>
-                <div class="column">
-                    <div style="width: 100%; text-align: center; font-size: 20px;">$ Return</div>
-                    <div class="column-info">(Cash Value)</div>
-                </div>
+            <div class="title-column">
+                <div style="text-align: center; font-size: 20px;">Units Placed</div>
+                <div class="column-info">(Your Bet)</div>
+            </div>
+            <div class="title-column">
+                <div style="text-align: center; font-size: 20px;">Total Return</div>
+                <div class="column-info">(Original Bet + Winnings)</div>
+            </div>
+            <div class="title-column">
+                <div style="text-align: center; font-size: 20px;">$ Return</div>
+                <div class="column-info">(Cash Value)</div>
             </div>
         </div>
         
